@@ -20,6 +20,7 @@ class IdTest(
             Author(
                 name = "Test",
                 age = 100,
+                nickname = "nickname",
                 weight = 170.0,
                 height = 70f,
                 status = Status.INACTIVE,

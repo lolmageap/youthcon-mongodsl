@@ -14,7 +14,6 @@ interface AuthorPredicateBuilder {
         minAge: Int?,
         maxAge: Int?,
         nickname: String?,
-        pageable: Pageable,
     ): BooleanExpression
 }
 
@@ -24,7 +23,6 @@ class AuthorPredicateBuilderImpl : AuthorPredicateBuilder {
         minAge: Int?,
         maxAge: Int?,
         nickname: String?,
-        pageable: Pageable,
     ): BooleanExpression {
         val author = QAuthor.author
         var predicate = author.name.`in`(names)
@@ -55,7 +53,7 @@ class AuthorService(
         nickname: String?,
         pageable: Pageable,
     ): Page<Author> {
-        val predicate = authorPredicateBuilder.findAuthors(names, minAge, maxAge, nickname, pageable)
+        val predicate = authorPredicateBuilder.findAuthors(names, minAge, maxAge, nickname)
         return authorRepository.findAll(predicate, pageable)
     }
 }
