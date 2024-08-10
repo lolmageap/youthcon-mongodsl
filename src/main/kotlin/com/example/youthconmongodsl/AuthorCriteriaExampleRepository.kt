@@ -1,12 +1,12 @@
 package com.example.youthconmongodsl
 
-import com.example.youthconmongodsl.collection.Author
+import com.example.youthconmongodsl.collection.YoungAuthor
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.repository.MongoRepository
 
-interface AuthorCriteriaRepository : MongoRepository<Author, String>, AuthorRepositoryCustomize
+interface AuthorCriteriaRepository : MongoRepository<YoungAuthor, String>, AuthorRepositoryCustomize
 
 interface AuthorRepositoryRaw {
     fun findAuthors(
@@ -14,7 +14,7 @@ interface AuthorRepositoryRaw {
         minAge: Int?,
         maxAge: Int?,
         nickname: String?,
-    ): List<Author>
+    ): List<YoungAuthor>
 }
 
 class AuthorRepositoryRawImpl(
@@ -25,7 +25,7 @@ class AuthorRepositoryRawImpl(
         minAge: Int?,
         maxAge: Int?,
         nickname: String?,
-    ): List<Author> {
+    ): List<YoungAuthor> {
         val criteriaList = mutableListOf<Criteria>()
         criteriaList.add(Criteria.where("name").`in`(names))
         if (minAge != null && maxAge != null) {
@@ -38,11 +38,11 @@ class AuthorRepositoryRawImpl(
 
         val query =
             if (criteriaList.isNotEmpty()) {
-                val criteria = Criteria().andOperator(*criteriaList.toTypedArray())
+                val criteria = Criteria().andOperator(criteriaList)
                 Query(criteria)
             } else {
                 Query()
             }
-        return mongoTemplate.find(query, Author::class.java)
+        return mongoTemplate.find(query, YoungAuthor::class.java)
     }
 }

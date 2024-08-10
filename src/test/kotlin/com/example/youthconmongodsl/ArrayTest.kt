@@ -1,6 +1,6 @@
 package com.example.youthconmongodsl
 
-import com.example.youthconmongodsl.collection.Author
+import com.example.youthconmongodsl.collection.YoungAuthor
 import com.example.youthconmongodsl.extension.document
 import com.example.youthconmongodsl.extension.field
 import com.example.youthconmongodsl.extension.find
@@ -18,24 +18,23 @@ class ArrayTest(
     fun `배열 필드에 대한 equal 연산 테스트`() {
         val document = document {
             and(
-                { field(Author::books) eq listOf("book1", "book2") },
+                { field(YoungAuthor::books) eq mutableListOf("book1", "book2") },
             )
         }
 
-        val author = mongoTemplate.find(document, Author::class).first()
-        assert(author.books == listOf("book1", "book2"))
+        val youngAuthor = mongoTemplate.find(document, YoungAuthor::class).first()
+        assert(youngAuthor.books == mutableListOf("book1", "book2"))
     }
 
     @Test
     fun `배열 필드에 대한 not equal 연산 테스트`() {
         val document = document {
             and(
-                { field(Author::books) ne listOf("book1", "book2") },
+                { field(YoungAuthor::books) ne mutableListOf("book1", "book2") },
             )
         }
 
-        val author = mongoTemplate.find(document, Author::class).first()
-
-        assert(author.books != listOf("book1", "book2"))
+        val youngAuthor = mongoTemplate.find(document, YoungAuthor::class).first()
+        assert(youngAuthor.books != mutableListOf("book1", "book2"))
     }
 }

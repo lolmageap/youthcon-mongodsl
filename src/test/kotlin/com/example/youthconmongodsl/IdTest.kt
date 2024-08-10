@@ -1,6 +1,6 @@
 package com.example.youthconmongodsl
 
-import com.example.youthconmongodsl.collection.Author
+import com.example.youthconmongodsl.collection.YoungAuthor
 import com.example.youthconmongodsl.collection.Status
 import com.example.youthconmongodsl.extension.document
 import com.example.youthconmongodsl.extension.field
@@ -16,25 +16,24 @@ class IdTest(
 
     @Test
     fun `id 값으로 조회`() {
-        val author = mongoTemplate.insert(
-            Author(
+        val youngAuthor = mongoTemplate.insert(
+            YoungAuthor(
                 name = "Test",
                 age = 100,
                 nickname = "nickname",
                 weight = 170.0,
                 height = 70f,
                 status = Status.INACTIVE,
-                books = emptyList(),
             )
         )
 
         val document = document {
             and(
-                { field(Author::id) eq author.id },
+                { field(YoungAuthor::id) eq youngAuthor.id },
             )
         }
 
-        val result = mongoTemplate.find(document, Author::class).first()
-        assert(result == author)
+        val result = mongoTemplate.find(document, YoungAuthor::class).first()
+        assert(result == youngAuthor)
     }
 }

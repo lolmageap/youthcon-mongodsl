@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext
 class MongoConfig {
     @Bean
     fun mongoTemplate(): MongoTemplate {
-        val factory = SimpleMongoClientDatabaseFactory("mongodb://localhost:27017/test")
+        val factory = SimpleMongoClientDatabaseFactory("mongodb://localhost:27017/youthcon")
         val converter = MappingMongoConverter(
             DefaultDbRefResolver(factory),
             MongoMappingContext(),

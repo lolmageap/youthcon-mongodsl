@@ -1,3 +1,6 @@
 spring:
   application:
     name: youthcon-mongodsl
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/youthcon

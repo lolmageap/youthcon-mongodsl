@@ -1,7 +1,7 @@
 package com.example.youthconmongodsl
 
-import com.example.youthconmongodsl.collection.Author
-import com.example.youthconmongodsl.collection.QAuthor
+import com.example.youthconmongodsl.collection.OldAuthor
+import com.example.youthconmongodsl.collection.QOldAuthor
 import com.querydsl.core.types.dsl.BooleanExpression
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -24,7 +24,7 @@ class AuthorPredicateBuilderImpl : AuthorPredicateBuilder {
         maxAge: Int?,
         nickname: String?,
     ): BooleanExpression {
-        val author = QAuthor.author
+        val author = QOldAuthor.oldAuthor
         var predicate = author.name.`in`(names)
         if (minAge != null && maxAge != null) {
             predicate = predicate.and(
@@ -40,7 +40,7 @@ class AuthorPredicateBuilderImpl : AuthorPredicateBuilder {
     }
 }
 
-interface AuthorRepositoryQueryDSL : MongoRepository<Author, String>, QuerydslPredicateExecutor<Author>
+interface AuthorRepositoryQueryDSL : MongoRepository<OldAuthor, String>, QuerydslPredicateExecutor<OldAuthor>
 
 class AuthorService(
     private val authorRepository: AuthorRepositoryQueryDSL,
@@ -52,7 +52,7 @@ class AuthorService(
         maxAge: Int?,
         nickname: String?,
         pageable: Pageable,
-    ): Page<Author> {
+    ): Page<OldAuthor> {
         val predicate = authorPredicateBuilder.findAuthors(names, minAge, maxAge, nickname)
         return authorRepository.findAll(predicate, pageable)
     }
