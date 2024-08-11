@@ -1,5 +1,6 @@
 package com.example.youthconmongodsl
 
+import com.example.youthconmongodsl.clazz.embeddedDocument
 import com.example.youthconmongodsl.collection.Book
 import com.example.youthconmongodsl.collection.YoungAuthor
 import com.example.youthconmongodsl.extension.document
@@ -78,6 +79,22 @@ class ArrayTest(
             )
         )
     }
+
+    @Test
+    fun `배열 필드에 대한 equal 연산 테스트3`() {
+        val document = document {
+            embeddedDocument(YoungAuthor::books).elemMatch({
+                or(
+                    { field(Book::title) eq "book1" },
+                )
+            })
+        }
+
+        val youngAuthor = mongoTemplate.find(document, YoungAuthor::class).first()
+        val titles = youngAuthor.books.map { it.title }
+
+        assert(titles == mutableListOf("book1", "book2"))
+    }
 }
 
 private fun createBook(
@@ -85,10 +102,9 @@ private fun createBook(
     price: Long = 10000L,
     isbn: String = "isbn",
     description: String? = null,
-) =
-    Book.of(
-        title,
-        price,
-        isbn,
-        description,
-    )
+) = Book.of(
+    title,
+    price,
+    isbn,
+    description,
+)
