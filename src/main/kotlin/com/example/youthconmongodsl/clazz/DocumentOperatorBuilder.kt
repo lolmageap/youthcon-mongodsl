@@ -42,6 +42,19 @@ class DocumentOperatorBuilder(
         else document
     }
 
+    fun EmbeddedDocument.elemMatch(
+        vararg block: Document.() -> Document?,
+    ): Document {
+        val notEmptyBlocks = block.invokeIfNotEmpty()
+
+        return if (notEmptyBlocks.isNotEmpty()) {
+            val mergedDocument = Document()
+            notEmptyBlocks.forEach { mergedDocument.putAll(it) }
+
+            document.append(this.name, Document().append(ELEM_MATCH, mergedDocument))
+        } else document
+    }
+
     fun Document.and(
         vararg block: Document.() -> Document?,
     ): Document {
@@ -74,15 +87,6 @@ class DocumentOperatorBuilder(
         else this
     }
 
-    // elemMatch 는 아직 테스트를 해보지 않았습니다.
-    fun Document.elemMatch(
-        vararg block: Document.() -> Document?,
-    ): Document {
-        val notEmptyBlocks = block.invokeIfNotEmpty()
-        return if (notEmptyBlocks.isNotEmpty()) this.append(ELEM_MATCH, notEmptyBlocks)
-        else this
-    }
-
     fun Document.and(
         block: List<Document.() -> Document?>,
     ): Document {
@@ -112,15 +116,6 @@ class DocumentOperatorBuilder(
     ): Document {
         val notEmptyBlocks = block.invokeIfNotEmpty()
         return if (notEmptyBlocks.isNotEmpty()) this.append(NOT, notEmptyBlocks)
-        else this
-    }
-
-    // elemMatch 는 아직 테스트를 해보지 않았습니다.
-    fun Document.elemMatch(
-        block: List<Document.() -> Document?>,
-    ): Document {
-        val notEmptyBlocks = block.invokeIfNotEmpty()
-        return if (notEmptyBlocks.isNotEmpty()) this.append(ELEM_MATCH, notEmptyBlocks)
         else this
     }
 
