@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.repository.MongoRepository
 
-interface AuthorCriteriaRepository : MongoRepository<YoungAuthor, String>, AuthorRepositoryCustomize
+interface AuthorCriteriaRepository : MongoRepository<YoungAuthor, String>, AuthorRepositoryRaw
 
 interface AuthorRepositoryRaw {
     fun findAuthors(

@@ -10,10 +10,31 @@ data class YoungAuthor(
     @Id @Field("_id")
     val id: String = ObjectId.get().toHexString(),
     val name: String,
-    val nickname: String,
     val age: Int,
-    val weight: Double,
-    val height: Float,
     val status: Status,
-    val books: MutableList<String> = mutableListOf(),
-)
+    val nickname: String?,
+    val weight: Double?,
+    val height: Float?,
+    val books: MutableList<Book>,
+) {
+    companion object {
+        fun of(
+            name: String,
+            age: Int,
+            books: MutableList<Book>,
+            status: Status = Status.ACTIVE,
+            nickname: String? = null,
+            weight: Double? = null,
+            height: Float? = null,
+        ) =
+            YoungAuthor(
+                name = name,
+                age = age,
+                books = books,
+                status = status,
+                nickname = nickname,
+                weight = weight,
+                height = height,
+            )
+    }
+}

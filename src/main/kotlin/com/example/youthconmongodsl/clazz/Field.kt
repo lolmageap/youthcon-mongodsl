@@ -120,8 +120,8 @@ class Field<T, R>(
 
             else -> {
                 document.append(
-                    key.fieldName, Document(LESS_THAN_EQUAL, values.first?.let { it.convertIfId() })
-                        .append(GREATER_THAN_EQUAL, values.second?.let { it.convertIfId() })
+                    key.fieldName, Document(GREATER_THAN_EQUAL, values.first?.let { it.convertIfId() })
+                        .append(LESS_THAN_EQUAL, values.second?.let { it.convertIfId() })
                 )
             }
         }
@@ -150,8 +150,8 @@ class Field<T, R>(
             else -> {
                 document.append(
                     key.fieldName, Document(
-                        NOT, Document(LESS_THAN_EQUAL, values.first?.let { it.convertIfId() })
-                            .append(GREATER_THAN_EQUAL, values.second?.let { it.convertIfId() })
+                        NOT, Document(GREATER_THAN_EQUAL, values.first?.let { it.convertIfId() })
+                            .append(LESS_THAN_EQUAL, values.second?.let { it.convertIfId() })
                     )
                 )
             }

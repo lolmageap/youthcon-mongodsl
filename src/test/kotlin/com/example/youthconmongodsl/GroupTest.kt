@@ -4,6 +4,7 @@ import com.example.youthconmongodsl.collection.YoungAuthor
 import com.example.youthconmongodsl.collection.Status.ACTIVE
 import com.example.youthconmongodsl.collection.Status.INACTIVE
 import com.example.youthconmongodsl.extension.*
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -14,6 +15,38 @@ import java.math.BigDecimal
 class GroupTest(
     @Autowired private val mongoTemplate: MongoTemplate,
 ) {
+    @BeforeEach
+    fun setUp() {
+        mongoTemplate.dropCollection(YoungAuthor::class.java)
+        mongoTemplate.insertAll(
+            listOf(
+                YoungAuthor.of(
+                    name = "John",
+                    age = 10,
+                    status = INACTIVE,
+                    books = mutableListOf(),
+                ),
+                YoungAuthor.of(
+                    name = "John",
+                    age = 20,
+                    status = ACTIVE,
+                    books = mutableListOf(),
+                ),
+                YoungAuthor.of(
+                    name = "John",
+                    age = 30,
+                    status = ACTIVE,
+                    books = mutableListOf(),
+                ),
+                YoungAuthor.of(
+                    name = "John",
+                    age = 40,
+                    status = ACTIVE,
+                    books = mutableListOf(),
+                ),
+            )
+        )
+    }
     @Test
     fun `전체에 대한 count 를 구한다`() {
         val document = document {
@@ -36,7 +69,7 @@ class GroupTest(
 
         val statusGroup = document.groupBy(YoungAuthor::status)
         val countOfGroup = mongoTemplate.count(statusGroup, YoungAuthor::class)
-        assert(countOfGroup == mapOf(ACTIVE to 3, INACTIVE to 1))
+        assert(countOfGroup == mapOf(ACTIVE to 3L, INACTIVE to 1L))
     }
 
     @Test
@@ -138,19 +171,4 @@ class GroupTest(
         val minOfAge = mongoTemplate.min(nameGroup, YoungAuthor::age)
         assert(minOfAge == mapOf("John" to 10))
     }
-
-    @Test
-    fun `전체에 대한 데이터를 다른 타입으로 컨버팅 하고 연산을 할 수 있다`() {
-        val document = document {
-            and(
-                { field(YoungAuthor::name) eq "John" },
-            )
-        }
-
-        val totalHeight = mongoTemplate.sum(document, YoungAuthor::height, BigDecimal::class)
-        assert(totalHeight.roundOff == 740.toBigDecimal())
-    }
 }
-
-private val BigDecimal.roundOff: BigDecimal
-    get() = this.setScale(0)

@@ -77,7 +77,7 @@ class FieldTest {
                 { field(YoungAuthor::age) between (18 to 30) },
             )
         }
-        assert(document == BasicQuery("{ \"\$and\" : [{ \"age\" : {\"\$gte\" : 18, \"\$lt\" : 30}}]}"))
+        assert(document == BasicQuery("{ \"\$and\" : [{ \"age\" : {\"\$gt\" : 18, \"\$lt\" : 30}}]}"))
     }
 
     @Test
@@ -87,6 +87,7 @@ class FieldTest {
                 { field(YoungAuthor::age) betweenInclusive (18 to 30) },
             )
         }
+
         assert(document == BasicQuery("{ \"\$and\" : [{ \"age\" : {\"\$gte\" : 18, \"\$lte\" : 30}}]}"))
     }
 
@@ -98,7 +99,7 @@ class FieldTest {
                 { field(YoungAuthor::age) lte 30 },
             )
         }
-        assert(document == BasicQuery("{ \"\$and\" : [{ \"age\" : {\"\$gt\" : 18, \"\$lte\" : 30}}]}"))
+        assert(document == BasicQuery("{ \"\$and\" : [{ \"age\" : { \"\$gt\" : 18}}, { \"age\" : { \"\$lte\" : 30}}]}"))
     }
 
     @Test
@@ -109,7 +110,8 @@ class FieldTest {
                 { field(YoungAuthor::age) lt 30 },
             )
         }
-        assert(document == BasicQuery("{ \"\$and\" : [{ \"age\" : {\"\$gte\" : 18, \"\$lt\" : 30}}]}"))
+
+        assert(document == BasicQuery("{ \"\$and\" : [{ \"age\" : { \"\$gte\" : 18}}, { \"age\" : { \"\$lt\" : 30}}]}"))
     }
 
     @Test

@@ -15,6 +15,6 @@ class DocumentScopeTest {
                 { field(YoungAuthor::age) eq 18 },
             )
         }
-        assert(document === BasicQuery("{ \"\$and\" : [{ \"name\" : \"John\"}, { \"age\" : 18}]}"))
+        assert(document == BasicQuery("{ \"\$and\" : [{ \"name\" : \"John\"}, { \"age\" : 18}]}"))
     }
 }

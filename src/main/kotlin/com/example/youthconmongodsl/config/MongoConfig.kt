@@ -1,5 +1,6 @@
 package com.example.youthconmongodsl.config
 
+import com.example.youthconmongodsl.dto.MongoProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.mongodb.core.MongoTemplate
@@ -9,10 +10,12 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext
 
 @Configuration
-class MongoConfig {
+class MongoConfig(
+    private val mongoProperty: MongoProperty,
+) {
     @Bean
     fun mongoTemplate(): MongoTemplate {
-        val factory = SimpleMongoClientDatabaseFactory("mongodb://localhost:27017/youthcon")
+        val factory = SimpleMongoClientDatabaseFactory(mongoProperty.uri)
         val converter = MappingMongoConverter(
             DefaultDbRefResolver(factory),
             MongoMappingContext(),
