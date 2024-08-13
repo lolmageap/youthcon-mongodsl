@@ -1,6 +1,6 @@
 package com.example.youthconmongodsl
 
-import com.example.youthconmongodsl.collection.YoungAuthor
+import com.example.youthconmongodsl.collection.Author
 import com.example.youthconmongodsl.extension.document
 import com.example.youthconmongodsl.extension.field
 import com.example.youthconmongodsl.extension.orderBy
@@ -13,10 +13,10 @@ class OrderByTest {
     fun `단일 orderBy 정렬 테스트`() {
         val document = document {
             and(
-                { field(YoungAuthor::name) eq "John" },
-                { field(YoungAuthor::age) eq 18 },
+                { field(Author::name) eq "John" },
+                { field(Author::age) eq 18 },
             )
-        }.orderBy(YoungAuthor::name).desc()
+        }.orderBy(Author::name).desc()
 
         assert(document.sortObject == Document("name", -1))
     }
@@ -25,11 +25,11 @@ class OrderByTest {
     fun `다중 orderBy 정렬 테스트`() {
         val document = document {
             and(
-                { field(YoungAuthor::name) eq "John" },
-                { field(YoungAuthor::age) eq 18 },
+                { field(Author::name) eq "John" },
+                { field(Author::age) eq 18 },
             )
-        }.orderBy(YoungAuthor::name).desc()
-            .orderBy(YoungAuthor::age).asc()
+        }.orderBy(Author::name).desc()
+            .orderBy(Author::age).asc()
 
         assert(document.sortObject == Document("name", -1).append("age", 1))
     }

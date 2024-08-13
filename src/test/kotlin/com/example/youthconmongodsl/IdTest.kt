@@ -1,11 +1,10 @@
 package com.example.youthconmongodsl
 
-import com.example.youthconmongodsl.collection.YoungAuthor
+import com.example.youthconmongodsl.collection.Author
 import com.example.youthconmongodsl.collection.Status
 import com.example.youthconmongodsl.extension.document
 import com.example.youthconmongodsl.extension.field
 import com.example.youthconmongodsl.extension.find
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -17,22 +16,22 @@ class IdTest(
 ) {
     @Test
     fun `id 값으로 조회`() {
-        val youngAuthor = mongoTemplate.insert(
-            YoungAuthor.of(
+        val author = mongoTemplate.insert(
+            Author.of(
                 name = "Test",
                 age = 100,
-                status = Status.INACTIVE,
+                status = Status.RETIREMENT,
                 books = mutableListOf(),
             )
         )
 
         val document = document {
             and(
-                { field(YoungAuthor::id) eq youngAuthor.id },
+                { field(Author::id) eq author.id },
             )
         }
 
-        val result = mongoTemplate.find(document, YoungAuthor::class).first()
-        assert(result == youngAuthor)
+        val result = mongoTemplate.find(document, Author::class).first()
+        assert(result == author)
     }
 }

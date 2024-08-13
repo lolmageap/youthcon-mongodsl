@@ -205,7 +205,6 @@ class Field<T, R>(
         return document.append(key.fieldName, Document(MATCH, value.convertIfId()))
     }
 
-    // 이 아래 3개의 operator는 테스트가 더 필요하다.
     infix fun all(value: Iterable<R>): Document {
         return document.append(key.fieldName, Document(ALL, value.map { it.convertIfId() }))
     }

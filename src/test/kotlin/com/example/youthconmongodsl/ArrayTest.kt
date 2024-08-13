@@ -2,7 +2,7 @@ package com.example.youthconmongodsl
 
 import com.example.youthconmongodsl.clazz.embeddedDocument
 import com.example.youthconmongodsl.collection.Book
-import com.example.youthconmongodsl.collection.YoungAuthor
+import com.example.youthconmongodsl.collection.Author
 import com.example.youthconmongodsl.extension.document
 import com.example.youthconmongodsl.extension.field
 import com.example.youthconmongodsl.extension.find
@@ -19,10 +19,10 @@ class ArrayTest(
 
     @BeforeEach
     fun setUp() {
-        mongoTemplate.dropCollection(YoungAuthor::class.java)
+        mongoTemplate.dropCollection(Author::class.java)
         mongoTemplate.insertAll(
             listOf(
-                YoungAuthor.of(
+                Author.of(
                     name = "John",
                     age = 18,
                     books = mutableListOf(
@@ -30,7 +30,7 @@ class ArrayTest(
                         createBook("book2"),
                     ),
                 ),
-                YoungAuthor.of(
+                Author.of(
                     name = "Jane",
                     age = 20,
                     books = mutableListOf(
@@ -50,12 +50,12 @@ class ArrayTest(
 
         val document = document {
             and(
-                { field(YoungAuthor::books) eq books },
+                { field(Author::books) eq books },
             )
         }
 
-        val youngAuthor = mongoTemplate.find(document, YoungAuthor::class).first()
-        val titles = youngAuthor.books.map { it.title }
+        val author = mongoTemplate.find(document, Author::class).first()
+        val titles = author.books.map { it.title }
         assert(titles == mutableListOf("book1", "book2"))
     }
 
@@ -67,12 +67,12 @@ class ArrayTest(
 
         val document = document {
             and(
-                { field(YoungAuthor::books) ne books },
+                { field(Author::books) ne books },
             )
         }
 
-        val youngAuthor = mongoTemplate.find(document, YoungAuthor::class).first()
-        val titles = youngAuthor.books.map { it.title }
+        val author = mongoTemplate.find(document, Author::class).first()
+        val titles = author.books.map { it.title }
         assert(
             !titles.containsAll(
                 mutableListOf("book1", "book2")
@@ -83,15 +83,15 @@ class ArrayTest(
     @Test
     fun `배열 필드에 대한 equal 연산 테스트3`() {
         val document = document {
-            embeddedDocument(YoungAuthor::books).elemMatch({
+            embeddedDocument(Author::books).elemMatch({
                 or(
                     { field(Book::title) eq "book1" },
                 )
             })
         }
 
-        val youngAuthor = mongoTemplate.find(document, YoungAuthor::class).first()
-        val titles = youngAuthor.books.map { it.title }
+        val author = mongoTemplate.find(document, Author::class).first()
+        val titles = author.books.map { it.title }
 
         assert(titles == mutableListOf("book1", "book2"))
     }
