@@ -76,54 +76,42 @@ fun `같지 않은 값을 조회합니다.`() {
 @Test
 fun `큰 값을 조회합니다`() {
     document {
-        and(
-            { field(Author::age) gt 18 },
-        )
+        and { field(Author::age) gt 18 }
     }
 }
 
 @Test
 fun `작은 값을 조회합니다`() {
     document {
-        and(
-            { field(YoungAuthor::age) lt 18 },
-        )
+        and { field(Author::age) lt 18 }
     }
 }
 
 @Test
 fun `사이에 있는 값을 조회합니다`() {
     document {
-        and(
-            { field(YoungAuthor::age) between (18 to 30) },
-        )
+        and { field(Author::age) between (18 to 30) }
     }
 }
 
 @Test
 fun `값을 포함하면 조회합니다`() {
     document {
-        and(
-            { field(YoungAuthor::age) `in` listOf(18, 19, 20) },
-        )
+        and { field(Author::age) `in` listOf(18, 19, 20) }
     }
 }
 
 @Test
 fun `like 연산과 같이 문자열을 포함하면 조회합니다`() {
     document {
-        and(
-            { field(YoungAuthor::name) contains "John" },
-        )
+        and { field(Author::name) contains "John" }
     }
 }
 
 @Test
 fun `like 연산과 같지만 대소문자를 구별하지 않고 문자열을 포함하면 조회합니다`() {
     document {
-        and(
-            { field(YoungAuthor::name) containsIgnoreCase "John" },
-        )
+        and { field(Author::name) containsIgnoreCase "John" }
     }
 }
 ```
@@ -139,12 +127,10 @@ grouping을 사용하면 sum, avg, min, max, count 등 다양한 통계 쿼리�
 @Test
 fun `전체에 대한 합을 구한다`() {
     val document = document {
-        and(
-            { field(YoungAuthor::name) eq "John" },
-        )
+        and { field(Author::name) eq "John" }
     }
 
-    val sumOfAge = mongoTemplate.sum(document, YoungAuthor::age)
+    val sumOfAge = mongoTemplate.sum(document, Author::age)
     assert(sumOfAge == 100)
 }
 ```
@@ -156,13 +142,11 @@ grouping을 명시하면 아래와 같이 group 별로 통계 쿼리를 생성�
 @Test
 fun `grouping 된 필드에 대한 합을 구한다`() {
     val document = document {
-        and(
-            { field(YoungAuthor::name) eq "John" },
-        )
+        and { field(Author::name) eq "John" }
     }
 
-    val statusGroup = document.groupBy(YoungAuthor::status)
-    val sumOfGroup = mongoTemplate.sum(statusGroup, YoungAuthor::age)
+    val statusGroup = document.groupBy(Author::status)
+    val sumOfGroup = mongoTemplate.sum(statusGroup, Author::age)
     assert(sumOfGroup == mapOf(ACTIVE to 90, INACTIVE to 10))
 }
 ```
@@ -178,11 +162,11 @@ fun `grouping 된 필드에 대한 합을 구한다`() {
 fun `다중 orderBy 정렬 테스트`() {
     val document = document {
         and(
-            { field(YoungAuthor::name) eq "John" },
-            { field(YoungAuthor::age) eq 18 },
+            { field(Author::name) eq "John" },
+            { field(Author::age) eq 18 },
         )
-    }.orderBy(YoungAuthor::name).desc()
-        .orderBy(YoungAuthor::age).asc()
+    }.orderBy(Author::name).desc()
+        .orderBy(Author::age).asc()
 
     assert(document.sortObject == Document("name", -1).append("age", 1))
 }
@@ -200,12 +184,12 @@ Criteria로 작성된 쿼리를 DSL로 리팩토링하는 실습을 진행합니
     - 별명이 존재하지 않는 작가 또는 나이가 50 이상이지만 키가 160cm 이하인 작가를 조회한다.
     - 나이가 20대 이고 상태가 ACTIVE 여야하고 또는 나이가 61살 이상 90살 미만이고 상태가 REST, RETIREMENT 여야합니다.
 
-3. 동적 조건을 포함한 쿼리
-    - nullable한 필드를 포함한 검색용 DTO로 쿼리를 작성합니다.
-
-4. embedding된 document를 기반으로 조회하는 쿼리
+3. embedding된 document를 기반으로 조회하는 쿼리
     - 책의 제목이 Kotlin 이고 저자의 이름이 cherhy 인 책을 조회합니다.
 
-5. 통계 쿼리
+4. 통계 쿼리
     - 책을 3권 이상 낸 30대 이상의 작가의 돈의 총합을 구합니다.
     - 책을 3권 이상 낸 30대 이상의 작가를 상태 별로 그루핑하여 돈의 합을 구합니다.
+
+5. 동적 조건을 포함한 쿼리
+   - nullable한 필드를 포함한 검색용 DTO로 쿼리를 작성합니다.
