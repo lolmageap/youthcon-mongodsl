@@ -28,28 +28,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-    // QueryDSL 때문에 별도로 추가한 의존성
-//    implementation("org.springframework.data:spring-data-mongodb:3.3.0")
-//    implementation("com.querydsl:querydsl-mongodb:5.0.0")
-//    kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
-//    implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
-//    implementation("org.mongodb:mongodb-driver-core:4.4.0")
-//    implementation("org.mongodb:mongodb-driver-sync:4.4.0")
 }
-
-// QueryDSL 때문에 별도로 추가한 의존성
-//allOpen {
-//    annotation("org.springframework.data.mongodb.core.mapping.Document")
-//    annotation("jakarta.persistence.Entity")
-//    annotation("com.querydsl.core.annotations.QueryEntity")
-//}
-//
-//noArg {
-//    annotation("org.springframework.data.mongodb.core.mapping.Document")
-//    annotation("jakarta.persistence.Entity")
-//    annotation("com.querydsl.core.annotations.QueryEntity")
-//}
 
 kotlin {
     compilerOptions {
