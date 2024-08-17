@@ -17,14 +17,16 @@
 ## 발표 대상
 
 1. Kotlin에 관심이 있는 개발자
-2. 리팩토링을 좋아하는 개발자
-3. 나만의 DSL을 만들어보고 싶은 개발자
+2. MongoDB에 관심이 있는 개발자
+3. 개선하는 것을 좋아하는 개발자
+4. 나만의 DSL을 만들어보고 싶은 개발자
 
-## 메뉴얼
+## 시나리오
 
 1. 데이터가 들어 있는 MongoDB에 연결합니다.
-2. 코틀린에서 제공하는 탑레벨 함수, 확장 함수, 중위 함수에 대해서 학습합니다.
-3. 기존에 Criteria로 작성된 복잡한 코드를 DSL로 리팩토링합니다.
+2. Kotlin에서 제공하는 탑레벨 함수, 확장 함수, 중위 함수에 대해서 학습합니다.
+3. Spring, Kotlin으로 MongoDB 데이터를 조회하는 방법을 학습합니다.
+4. 기존에 Criteria로 작성된 복잡한 코드를 DSL로 리팩토링합니다.
 
 ### 설정 방법
 
@@ -39,12 +41,45 @@ spring:
       uri: mongodb://HOST를_넣어야합니다:27017/youthcon
 ```
 
+### MongoDB
+
+RDBMS는 Table 이라는 구조로 데이터를 저장하지만 MongoDB는 Collection 이라는 구조로 데이터를 저장합니다.  
+Collection은 아래처럼 Binary JSON 형태로 데이터를 저장합니다.  
+RDBMS와 다르게 복잡한 관계가 없는 데이터를 저장할 때 사용하면 좋습니다.  
+실습에서 진행할 MongoDB Collection 예시입니다.
+
+```json
+{
+  "_id": "66ba029d667d035a53c2eb57",
+  "name": "정철희",
+  "age": 25,
+  "status": "ACTIVE",
+  "nickname": "유스콘",
+  "weight": 65.0,
+  "height": 170.0,
+  "money": 1000,
+  "books": [
+    {
+      "title": "Kotlin DSL",
+      "price": 10000,
+      "isbn": "1234567890",
+      "description": "Kotlin DSL에 대한 설명"
+    },
+    {
+      "title": "SpringBoot",
+      "price": 20000,
+      "isbn": "0987654321"
+    }
+  ]
+}
+```
+
 ### Kotlin 함수
 
-#### 탑레벨 함수
+#### Top Level 함수
 
-Kotlin은 Java와 달리 탑레벨 함수를 지원합니다.  
-탑레벨 함수는 클래스 내부에 정의되지 않고 전역적으로 사용할 수 있는 함수를 의미합니다.
+Kotlin은 Java와 달리 Top Level 함수를 지원합니다.  
+Top Level 함수란 클래스 내부에 정의되지 않고 전역적으로 사용할 수 있는 함수를 의미합니다.
 
 ```java
 // Java
@@ -54,6 +89,7 @@ public class Main {
     }
 }
 ```
+
 ```kotlin
 // Kotlin
 fun main() {
@@ -82,13 +118,13 @@ fun User.hi() {
 
 #### 중위 함수
 
-인자가 하나뿐인 함수에는 중위 함수란 특별한 종류의 함수를 정의할 수 있습니다.  
-중위 함수 가독성이 좋아지고 코드가 간결해지는 장점이 있고 infix 라는 키워드를 사용하여 정의합니다.  
+Kotlin은 인자가 하나뿐인 함수에 infix 키워드를 붙혀 중위 함수란 특별한 종류의 함수를 지원합니다.  
+중위 함수를 사용하면 마치 연산자처럼 사용이 가능해지며 코드가 간결해져서 가독성이 좋아집니다.
 
 ```kotlin
 // 일반 함수
-fun sum(a: Int, b: Int): Int {
-    return a + b
+fun Int.sum(b: Int): Int {
+    return this + b
 }
 
 // 중위 함수
@@ -97,13 +133,7 @@ infix fun Int.plus(b: Int): Int {
 }
 
 fun main() {
-    sum(1, 2)
-    1 plus 2
+    val three = 1.sum(2)
+    val five = 2 plus 3
 }
 ```
-
-### 시나리오
-
-- 좀전에 배운 Kotlin 함수를 활용하여 Criteria로 작성된 코드를 DSL로 리팩토링합니다.
-- 간단한 Criteria 코드를 Kotlin DSL로 변경합니다.
-- 조금 복잡한 쿼리를 Kotlin DSL로 변경합니다.

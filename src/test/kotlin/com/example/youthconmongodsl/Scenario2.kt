@@ -1,83 +1,90 @@
 package com.example.youthconmongodsl
 
 import com.example.youthconmongodsl.collection.Author
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.domain.Sort
-import org.springframework.data.domain.Sort.Direction
-import org.springframework.data.domain.Sort.Direction.*
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
-import org.springframework.data.mongodb.core.query.and
 import org.springframework.data.mongodb.core.query.where
-import kotlin.reflect.KProperty
+import kotlin.reflect.KClass
+
+/**
+ * 1. Criteria().andOperator()에서 Criteria를 생성하는 부분은 생략이 가능해보입니다.
+ *    andOperator라는 top level 함수로 변경하는 것이 가독성이 더 좋을 것 같습니다.
+ *
+ * 2. andOperator 안에서 Criteria.where 와 같은 부분이 중복되어 사용되고 있다. 이 부분을 줄일 수 있을 것 같다.
+ *
+ * 3. where 안에 문자열 리터럴을 넘기고 있습니다.
+ *    이런경우 비즈니스로직을 작성할 때 오타가 발견해도 컴파일러가 알려주지 않습니다.
+ *    이런 문제를 Kotlin의 Reflection인 KProperty를 사용하여 해결할 수 있습니다.
+ *    여기서 KProperty란 코틀린에서 클래스 필드에 접근하여 필드에 대한 정보를 가져올 수 있는 클래스입니다.
+ *    이 부분은 직접 구현하는것보다 코틀린에서 지원해주는 where, and 함수를 가져와서 사용하는것이 더 좋을것 같습니다.
+ *
+ * 4. regex("hy", "i") <- 이게 명시적이지 않습니다..
+ *    mongoDB를 사용하지 않는 분들이 보기에는 이게 무슨 의미인지 알기 어려울 수 있습니다.
+ *
+ * 5. 확장 함수에 대해서 설명하며 Query(criteria) -> criteria.toQuery()로 변경하자.
+ *
+ * 6. .java도 생략 할 수 있을 것 같다.
+ */
 
 @SpringBootTest
 class Scenario2(
-    @Autowired private val mongoTemplate: MongoTemplate,
+    private val mongoTemplate: MongoTemplate,
 ) {
     @Test
-    fun `별명이 존재하지 않는 작가 또는 나이가 50 이상이고 키가 160cm 이하인 작가를 나이가 많은 순으로 조회한다 as is`() {
-        val criteria = Criteria().orOperator(
-            where("nickname").exists(false),
-            where("age").gte(50).and("height").lte(160),
+    fun `대소문자 구분 없이 별명에 hy가 포함된 저자를 조회합니다 as is`() {
+        val criteria = Criteria().andOperator(
+            Criteria.where("nickname").regex("hy", "i"),
+            Criteria.where("age").gte(30),
         )
 
-        val query = Query.query(criteria).with(Sort.by(Sort.Order.desc("age")))
+        val query = Query(criteria)
         val authors = mongoTemplate.find(query, Author::class.java)
+        val nicknameFilteredAuthors = authors.filter { it.nickname?.contains("hy", ignoreCase = true) == true }
+        val ageFilteredAuthors = authors.filter { it.age >= 30 }
+
+        Assertions.assertThat(authors.size).isEqualTo(nicknameFilteredAuthors.size)
+        Assertions.assertThat(authors.size).isEqualTo(ageFilteredAuthors.size)
     }
 
     @Test
-    fun `별명이 존재하지 않는 작가 또는 나이가 50 이상이고 키가 160cm 이하인 작가를 나이가 많은 순으로 조회한다 to be`() {
-        val criteria = orOperator(
-            where(Author::nickname) exists false,
-            where(Author::age) gte 50 and Author::height lte 160,
+    fun `대소문자 구분 없이 별명에 hy가 포함된 저자를 조회합니다 to be`() {
+        val criteria = andOperator(
+            where(Author::nickname).contains("hy", true),
+            where(Author::age).gte(30),
         ).toQuery()
-            .orderBy(Author::age, DESC)
 
         val authors = mongoTemplate.find(criteria, Author::class)
-    }
+        val nicknameFilteredAuthors = authors.filter { it.nickname?.contains("hy", ignoreCase = true) == true }
+        val ageFilteredAuthors = authors.filter { it.age >= 30 }
 
-    /**
-     * 1. 첫번째 시나리오에서 andOperator를 만들었던 것 처럼 orOperator를 만들어서 Criteria를 생성해도 될것 습니다.
-     *
-     * 2. where(key).exists(false) <- 이러한 부분을 코틀린의 infix 함수를 사용하여 변경할 수 있을것 같습니다.
-     *    infix 함수는 중위 함수라고도 불리며, 함수를 호출할때 .을 생략할 수 있습니다.
-     *    하지만 infix 함수를 사용한다고 무조건 가독성이 좋아지는것은 아닙니다.
-     *    복잡한 연산을 할 때 gte 함수와 and 함수, lte 함수 모두 infix 함수로 만들면 가독성이 떨어질 수 있습니다.
-     *    한번 직접 코드로 작성해보고 가독성을 확인해보시죠!
-     *
-     * 3. 정렬(sort)을 할때도 with(Sort.by(Sort.Order.asc("age"))) 이 부분도 더 깔끔하게 변경할 수 있을것 같습니다.
-     *    우리는 조금 더 명시적으로 orderBy 라는 키워드를 사용해서 함수를 한번 만들어보겠습니다.
-     */
+        Assertions.assertThat(authors.size).isEqualTo(nicknameFilteredAuthors.size)
+        Assertions.assertThat(authors.size).isEqualTo(ageFilteredAuthors.size)
+    }
 }
 
-fun orOperator(
+fun andOperator(
     vararg criteria: Criteria,
 ) =
-    Criteria().orOperator(*criteria)
+    Criteria().andOperator(*criteria)
 
-infix fun Criteria.exists(
-    value: Boolean,
+fun where(field: String) =
+    Criteria.where(field)
+
+fun Criteria.contains(
+    value: String,
+    ignoreCase: Boolean = false,
 ) =
-    this.exists(value)
+    regex(value, if (ignoreCase) "i" else null)
 
-fun Query.orderBy(
-    key: KProperty<*>,
-    direction: Direction,
-) =
-    this.with(
-        Sort.by(
-            Sort.Order(direction, key.name)
-        )
-    )
+fun Criteria.toQuery() =
+    Query(this)
 
-infix fun Criteria.gte(
-    value: Any,
-) = this.gte(value)
-
-infix fun Criteria.lte(
-    value: Any,
-) = this.lte(value)
+fun <T: Any> MongoTemplate.find(
+    query: Query,
+    clazz: KClass<T>,
+):MutableList<T> =
+    this.find(query, clazz.java)
