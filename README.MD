@@ -38,7 +38,7 @@ spring:
     name: youthcon-mongodsl
   data:
     mongodb:
-      uri: mongodb://HOST를_넣어야합니다:27017/youthcon
+      uri: mongodb://MONGO_ATLAS_HOST:27017/youthcon
 ```
 
 ### MongoDB

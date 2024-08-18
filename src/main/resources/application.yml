@@ -3,4 +3,4 @@ spring:
     name: youthcon-mongodsl
   data:
     mongodb:
-      uri: mongodb://localhost:27017/youthcon
+      uri: mongodb+srv://ekxk1234:nTljvtqyqD3cQ7bK@youthcon.gjzux.mongodb.net/youthcon
