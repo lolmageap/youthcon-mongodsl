@@ -35,9 +35,11 @@ class Scenario1(
         """.trimIndent()
 
         val jsonObject = JSONObject(json).toString()
-        val nativeQuery = BasicQuery(Document.parse(jsonObject))
+        val query = BasicQuery(Document.parse(jsonObject))
 
-        val author = mongoTemplate.findOne(nativeQuery, Author::class.java)
+
+        // 검증
+        val author = mongoTemplate.findOne(query, Author::class.java)
         Assertions.assertThat(author).isNotNull
     }
 
@@ -48,6 +50,8 @@ class Scenario1(
         )
         val query = Query.query(criteria)
 
+
+        // 검증
         val author = mongoTemplate.findOne(query, Author::class.java)
         Assertions.assertThat(author).isNotNull
     }

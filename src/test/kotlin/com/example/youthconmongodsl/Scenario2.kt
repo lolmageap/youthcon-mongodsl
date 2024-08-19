@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.Sort
+import org.springframework.data.domain.Sort.Direction.DESC
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -53,7 +54,7 @@ class Scenario2(
             Criteria.where("age").gte(30),
         )
 
-        val query = Query.query(criteria).with(Sort.by(Sort.Order.desc("age")))
+        val query = Query(criteria).with(Sort.by(Sort.Order(DESC, "age")))
         val authors = mongoTemplate.find(query, Author::class.java)
 
 
@@ -72,7 +73,7 @@ class Scenario2(
         val criteria = andOperator(
             where(Author::nickname) containsIgnoreCase "hy" and Author::age gte 30,
         ).toQuery()
-            .orderBy(Author::age, Sort.Direction.DESC)
+            .orderBy(Author::age, DESC)
 
         val authors = mongoTemplate.find(criteria, Author::class)
 
