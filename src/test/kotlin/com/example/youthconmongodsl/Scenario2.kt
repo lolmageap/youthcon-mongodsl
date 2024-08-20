@@ -16,7 +16,7 @@ class Scenario2(
     @Autowired private val mongoTemplate: MongoTemplate,
 ) {
     @Test
-    fun `대소문자 구분 없이 별명에 hy가 포함되고 나이가 30살 이상인 저자를 나이가 많은 순으로 조회한다 as is`() {
+    fun `대소문자 구분 없이 별명에 hy가 포함되고 나이가 30살 이상인 저자를 나이가 많은 순으로 조회한다`() {
         val criteria = Criteria().andOperator(
             Criteria.where("nickname").regex("hy", "i"),
             Criteria.where("age").gte(30),

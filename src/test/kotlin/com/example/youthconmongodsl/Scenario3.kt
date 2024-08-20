@@ -16,7 +16,7 @@ class Scenario3(
     @Autowired private val mongoTemplate: MongoTemplate,
 ) {
     @Test
-    fun `나이가 20대이고 키가 160cm 이상인 작가를 상태별로 그루핑한 뒤 가진 돈의 합을 구한다 as is`() {
+    fun `나이가 20대이고 키가 160cm 이상인 작가를 상태별로 그루핑한 뒤 가진 돈의 합을 구한다`() {
         val criteria = Criteria().andOperator(
             Criteria.where("age").gte(20).lte(29),
             Criteria.where("height").gte(160),

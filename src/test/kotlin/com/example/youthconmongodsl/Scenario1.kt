@@ -15,7 +15,7 @@ class Scenario1(
     @Autowired private val mongoTemplate: MongoTemplate,
 ) {
     @Test
-    fun `MongoTemplate에서 Native Query를 사용한 조회 as is`() {
+    fun `MongoTemplate에서 Native Query를 사용한 조회`() {
         val json = """
             {
                 "name": "youthcon",
