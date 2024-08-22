@@ -16,10 +16,10 @@ class Scenario3(
     @Autowired private val mongoTemplate: MongoTemplate,
 ) {
     @Test
-    fun `나이가 20대이고 키가 160cm 이상인 작가를 상태별로 그루핑한 뒤 가진 돈의 합을 구한다`() {
+    fun `나이가 20대이고 책을 3권 낸 작가를 상태별로 그루핑한 뒤 가진 돈의 합을 구한다`() {
         val criteria = Criteria().andOperator(
             Criteria.where("age").gte(20).lte(29),
-            Criteria.where("height").gte(160),
+            Criteria.where("books").size(3),
         )
 
         val matchOperation = MatchOperation(criteria)
@@ -36,8 +36,8 @@ class Scenario3(
             status to total
         }
 
-        Assertions.assertThat(statusToAverageMoney[Status.ACTIVE]).isEqualTo(7264569615)
-        Assertions.assertThat(statusToAverageMoney[Status.REST]).isEqualTo(7327825153)
-        Assertions.assertThat(statusToAverageMoney[Status.RETIREMENT]).isEqualTo(7566660567)
+        Assertions.assertThat(statusToAverageMoney[Status.ACTIVE]).isEqualTo(2161328487)
+        Assertions.assertThat(statusToAverageMoney[Status.REST]).isEqualTo(2110033461)
+        Assertions.assertThat(statusToAverageMoney[Status.RETIREMENT]).isEqualTo(2486962006)
     }
 }
