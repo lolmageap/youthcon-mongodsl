@@ -41,7 +41,7 @@ spring:
       uri: mongodb://MONGO_ATLAS_HOST:27017/youthcon
 ```
 
-### MongoDB
+### ⭐️ MongoDB
 
 RDBMS는 Table 이라는 구조로 데이터를 저장하지만 MongoDB는 Collection 이라는 구조로 데이터를 저장합니다.  
 Collection은 아래처럼 Binary JSON 형태로 데이터를 저장합니다.  
@@ -74,66 +74,56 @@ RDBMS와 다르게 복잡한 관계가 없는 데이터를 저장할 때 사용�
 }
 ```
 
-### Kotlin 함수
+### 🔥 실습
 
-#### Top Level 함수
+#### 1번 시나리오 - MongoDB 이해
 
-Kotlin은 Java와 달리 Top Level 함수를 지원합니다.  
-Top Level 함수란 클래스 내부에 정의되지 않고 전역적으로 사용할 수 있는 함수를 의미합니다.
-
-```java
-// Java
-public class Main {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
-}
-```
+MongoDB에 구조를 파악하고 데이터를 조회하는 방법을 학습합니다.  
+이후 Criteria로 코드를 리팩토링합니다.  
 
 ```kotlin
-// Kotlin
-fun main() {
-    println("Hello, World!")
-}
+    val json = """
+        {
+            "name": "youthcon",
+            "age": 30
+        }
+    """.trimIndent()
+
+    val jsonObject = JSONObject(json).toString()
+    val query = BasicQuery(Document.parse(jsonObject))
 ```
 
-#### 확장 함수
+#### 2번 시나리오 - Criteria 리팩토링
 
-Kotlin은 확장 함수라는 기능을 제공합니다.  
-확장 함수는 클래스 내부가 아닌 외부에서 클래스에 함수를 추가할 수 있습니다.
+Criteria로 작성된 코드를 DSL로 리팩토링합니다.  
+이때 Kotlin이 지원하는 탑레벨 함수, 확장 함수, 중위 함수에 대해 학습합니다.
 
 ```kotlin
-// 일반 함수
-class User(val name: String) {
-    fun greet() {
-        println("Hello, $name")
-    }
-}
+    // 닉네임에 hy가 들어가고 나이가 30세 이상인 작가를 나이를 기준으로 내림차순으로 정렬한다.
+    val criteria = Criteria().andOperator(
+        Criteria.where("nickname").regex("hy", "i"),
+        Criteria.where("age").gte(30),
+    )
 
-// 확장 함수
-fun User.hi() {
-    println("Hi, ${this.name}")
-}
+    val query = Query(criteria).with(Sort.by(Sort.Order(DESC, "age")))
+    val authors = mongoTemplate.find(query, Author::class.java)
 ```
 
-#### 중위 함수
+#### 3번 시나리오 - Criteria 집계 리팩토링
 
-Kotlin은 인자가 하나뿐인 함수에 infix 키워드를 붙혀 중위 함수란 특별한 종류의 함수를 지원합니다.  
-중위 함수를 사용하면 마치 연산자처럼 사용이 가능해지며 코드가 간결해져서 가독성이 좋아집니다.
+Criteria로 작성된 집계 코드를 DSL로 리팩토링합니다.  
+MongoDB의 집계를 모르는 사람도 이해할 수 있도록 코드를 작성합니다.  
 
 ```kotlin
-// 일반 함수
-fun Int.sum(b: Int): Int {
-    return this + b
-}
+    // 나이가 20대이고 책을 3권 낸 작가를 상태별로 그루핑한 뒤 가진 돈의 합을 구한다.
+    val criteria = Criteria().andOperator(
+        Criteria.where("age").gte(20).lte(29),
+        Criteria.where("books").size(3),
+    )
 
-// 중위 함수
-infix fun Int.plus(b: Int): Int {
-    return this + b
-}
+    val matchOperation = MatchOperation(criteria)
+    val groupOperation = Aggregation.group("status").sum("money").`as`("totalMoney")
+    val aggregation = Aggregation.newAggregation(matchOperation, groupOperation)
 
-fun main() {
-    val three = 1.sum(2)
-    val five = 2 plus 3
-}
+    val aggregationResults = mongoTemplate.aggregate(aggregation, Author::class.java, Map::class.java)
 ```
