@@ -3,4 +3,4 @@ spring:
     name: youthcon-mongodsl
   data:
     mongodb:
-      uri: mongodb+srv://ekxk1234:nTljvtqyqD3cQ7bK@youthcon.gjzux.mongodb.net/youthcon
+      uri: ENC(oVIibBHTW29qKbJ8FSlDVr2Ygx4162vNHZ6rMPcc03aLAe2KpPWaLeQLi4fvyp+WnMUqXrXvxn+TTPpQaxxivFvyJ5qoYaeMXhd+B6UjcJTsWojc3Wgf/Q==)
