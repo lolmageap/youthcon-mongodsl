@@ -3,9 +3,9 @@
 ## 실습 진행 환경
 
 - IntelliJ IDEA
-- Java 17, Kotlin 1.9.24
-- SpringBoot 3.3.2
-- Gradle 8.8
+- Java 21, Kotlin 1.9.24
+- SpringBoot 3.3.1
+- Gradle 8.4
 - mongodb 7
 
 ## 실습을 하고 얻는 것
