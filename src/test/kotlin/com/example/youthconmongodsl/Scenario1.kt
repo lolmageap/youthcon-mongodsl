@@ -1,7 +1,7 @@
 package com.example.youthconmongodsl
 
 import com.example.youthconmongodsl.collection.Author
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.bson.Document
 import org.json.JSONObject
 import org.junit.jupiter.api.Test
@@ -29,6 +29,6 @@ class Scenario1(
 
         // 검증
         val author = mongoTemplate.findOne(query, Author::class.java)
-        Assertions.assertThat(author).isNotNull
+        assertThat(author).isNotNull
     }
 }
