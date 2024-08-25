@@ -79,7 +79,7 @@ RDBMS와 다르게 복잡한 관계가 없는 데이터를 저장할 때 사용�
 #### 1번 시나리오 - MongoDB 이해
 
 MongoDB에 구조를 파악하고 데이터를 조회하는 방법을 학습합니다.  
-이후 Criteria로 코드를 리팩토링합니다.  
+그리고 문자열을 넘기는 비효율적인 코드를 Criteria로 어떻게 작성하는지 파악합니다.  
 
 ```kotlin
     val json = """
@@ -93,10 +93,17 @@ MongoDB에 구조를 파악하고 데이터를 조회하는 방법을 학습합�
     val query = BasicQuery(Document.parse(jsonObject))
 ```
 
+```kotlin
+    val criteria = Criteria().andOperator(
+        Criteria.where("name").`is`("youthcon").and("age").`is`(30)
+    )
+    val query = Query.query(criteria)
+```
+
 #### 2번 시나리오 - Criteria 리팩토링
 
 Criteria로 작성된 코드를 DSL로 리팩토링합니다.  
-이때 Kotlin이 지원하는 탑레벨 함수, 확장 함수, 중위 함수에 대해 학습합니다.
+이때 Kotlin이 지원하는 탑레벨 함수, 확장 함수, 중위 함수를 활용합니다.  
 
 ```kotlin
     // 닉네임에 hy가 들어가고 나이가 30세 이상인 작가를 나이를 기준으로 내림차순으로 정렬한다.
@@ -112,7 +119,7 @@ Criteria로 작성된 코드를 DSL로 리팩토링합니다.
 #### 3번 시나리오 - Criteria 집계 리팩토링
 
 Criteria로 작성된 집계 코드를 DSL로 리팩토링합니다.  
-MongoDB의 집계를 모르는 사람도 이해할 수 있도록 코드를 작성합니다.  
+MongoDB의 집계 방식을 잘 모르는 사람도 이해할 수 있도록 코드를 변경합니다.  
 
 ```kotlin
     // 나이가 20대이고 책을 3권 낸 작가를 상태별로 그루핑한 뒤 가진 돈의 합을 구한다.
