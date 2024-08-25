@@ -28,7 +28,7 @@
 3. Spring, Kotlin으로 MongoDB 데이터를 조회하는 방법을 학습합니다.
 4. 기존에 Criteria로 작성된 복잡한 코드를 DSL로 리팩토링합니다.
 
-### 설정 방법
+## 설정 방법
 
 데이터가 들어 있는 MongoDB URI를 yml 파일에서 설정합니다.
 
@@ -41,7 +41,7 @@ spring:
       uri: mongodb://MONGO_ATLAS_HOST:27017/youthcon
 ```
 
-### ⭐️ MongoDB
+## ⭐️ MongoDB
 
 RDBMS는 Table 이라는 구조로 데이터를 저장하지만 MongoDB는 Collection 이라는 구조로 데이터를 저장합니다.  
 Collection은 아래처럼 Binary JSON 형태로 데이터를 저장합니다.  
@@ -74,9 +74,9 @@ RDBMS와 다르게 복잡한 관계가 없는 데이터를 저장할 때 사용�
 }
 ```
 
-### 🔥 실습
+## 🔥 실습
 
-#### 1번 시나리오 - MongoDB 이해
+### 1번 시나리오 - MongoDB 이해
 
 MongoDB에 구조를 파악하고 데이터를 조회하는 방법을 학습합니다.  
 그리고 문자열을 넘기는 비효율적인 코드를 Criteria로 어떻게 작성하는지 파악합니다.  
@@ -100,13 +100,15 @@ MongoDB에 구조를 파악하고 데이터를 조회하는 방법을 학습합�
     val query = Query.query(criteria)
 ```
 
-#### 2번 시나리오 - Criteria 리팩토링
+### 2번 시나리오 - Criteria 리팩토링
 
 Criteria로 작성된 코드를 DSL로 리팩토링합니다.  
 이때 Kotlin이 지원하는 탑레벨 함수, 확장 함수, 중위 함수를 활용합니다.  
 
+> 닉네임에 hy가 들어가고 나이가 30세 이상인 작가를 나이를 기준으로 내림차순으로 정렬한다.
+
+- AS IS
 ```kotlin
-    // 닉네임에 hy가 들어가고 나이가 30세 이상인 작가를 나이를 기준으로 내림차순으로 정렬한다.
     val criteria = Criteria().andOperator(
         Criteria.where("nickname").regex("hy", "i"),
         Criteria.where("age").gte(30),
@@ -116,21 +118,49 @@ Criteria로 작성된 코드를 DSL로 리팩토링합니다.
     val authors = mongoTemplate.find(query, Author::class.java)
 ```
 
-#### 3번 시나리오 - Criteria 집계 리팩토링
+- TO BE
+```kotlin
+    val query = where {
+        Author::nickname containsIgnoreCase "hy"
+        Author::age greaterThanEqual 30
+    } order {
+        Author::age by DESC
+    }
+
+    val authors = mongoTemplate.find(query, Author::class)
+```
+
+### 3번 시나리오 - Criteria 집계 리팩토링
 
 Criteria로 작성된 집계 코드를 DSL로 리팩토링합니다.  
-MongoDB의 집계 방식을 잘 모르는 사람도 이해할 수 있도록 코드를 변경합니다.  
+MongoDB의 집계 방식을 잘 모르는 사람도 이해할 수 있도록 코드를 작성합니다.    
 
+> 나이가 20대이고 책을 3권 낸 작가를 상태별로 그루핑한 뒤 가진 돈의 합을 구한다.
+
+- AS IS
 ```kotlin
-    // 나이가 20대이고 책을 3권 낸 작가를 상태별로 그루핑한 뒤 가진 돈의 합을 구한다.
     val criteria = Criteria().andOperator(
         Criteria.where("age").gte(20).lte(29),
         Criteria.where("books").size(3),
     )
 
     val matchOperation = MatchOperation(criteria)
-    val groupOperation = Aggregation.group("status").sum("money").`as`("totalMoney")
+    val groupOperation = Aggregation.group("status").sum("money").`as`(TOTAL_MONEY)
     val aggregation = Aggregation.newAggregation(matchOperation, groupOperation)
+
+    val aggregationResults = mongoTemplate.aggregate(aggregation, Author::class.java, Map::class.java)
+```
+
+- TO BE
+```kotlin
+    val aggregation = where {
+        Author::age between 20..29
+        Author::books size 3
+    } groupBy {
+        Author::status
+    } sum {
+        Author::money alias TOTAL_MONEY
+    }
 
     val aggregationResults = mongoTemplate.aggregate(aggregation, Author::class.java, Map::class.java)
 ```
