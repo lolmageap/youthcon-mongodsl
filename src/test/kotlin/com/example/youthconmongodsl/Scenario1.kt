@@ -42,7 +42,7 @@ class Scenario1(
         val criteria = Criteria().andOperator(
             Criteria.where("name").`is`("youthcon").and("age").`is`(30)
         )
-        val query = Query.query(criteria)
+        val query = Query(criteria)
 
         // 검증
         val author = mongoTemplate.findOne(query, Author::class.java)

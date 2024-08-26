@@ -7,13 +7,10 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.mapping.toDotPath
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Aggregation
-import org.springframework.data.mongodb.core.aggregation.GroupOperation
 import org.springframework.data.mongodb.core.aggregation.MatchOperation
 import org.springframework.data.mongodb.core.query.Criteria
-import kotlin.reflect.KProperty
 
 @SpringBootTest
 @Suppress("SuspiciousCallableReferenceInLambda")
@@ -21,17 +18,16 @@ class Scenario3(
     @Autowired private val mongoTemplate: MongoTemplate,
 ) {
     @Test
-    @DisplayName("나이가 20대이고 책을 3권 낸 작가를 상태별로 그루핑한 뒤 가진 돈의 합을 구한다 as is")
+    @DisplayName("대소문자 구분 없이 별명에 hy가 포함되고 나이가 20대인 작가를 상태별로 그루핑한 뒤 가진 돈의 합을 구한다")
     fun asIs() {
         val criteria = Criteria().andOperator(
+            Criteria.where("nickname").regex("hy", "i"),
             Criteria.where("age").gte(20).lte(29),
-            Criteria.where("books").size(3),
         )
 
         val matchOperation = MatchOperation(criteria)
         val groupOperation = Aggregation.group("status").sum("money").`as`(TOTAL_MONEY)
         val aggregation = Aggregation.newAggregation(matchOperation, groupOperation)
-
 
 
         // 조회
@@ -44,9 +40,9 @@ class Scenario3(
             status to total
         }
 
-        assertThat(statusToAverageMoney[Status.ACTIVE]).isEqualTo(2161328487)
-        assertThat(statusToAverageMoney[Status.REST]).isEqualTo(2110033461)
-        assertThat(statusToAverageMoney[Status.RETIREMENT]).isEqualTo(2486962006)
+        assertThat(statusToAverageMoney[Status.ACTIVE]).isEqualTo(81428347)
+        assertThat(statusToAverageMoney[Status.REST]).isEqualTo(176777263)
+        assertThat(statusToAverageMoney[Status.RETIREMENT]).isEqualTo(181507261)
     }
 
     companion object {
