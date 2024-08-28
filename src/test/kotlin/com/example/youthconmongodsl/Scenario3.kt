@@ -38,15 +38,15 @@ class Scenario3(
         val aggregationResults = mongoTemplate.aggregate(aggregation, Author::class.java, Map::class.java)
 
         // 검증
-        val statusToAverageMoney = aggregationResults.mappedResults.associate {
+        val statusToTotalMoney = aggregationResults.mappedResults.associate {
             val status = Status.valueOf(it[ID].toString())
             val total = it[TOTAL_MONEY] as Long
             status to total
         }
 
-        assertThat(statusToAverageMoney[Status.ACTIVE]).isEqualTo(81428347)
-        assertThat(statusToAverageMoney[Status.REST]).isEqualTo(176777263)
-        assertThat(statusToAverageMoney[Status.RETIREMENT]).isEqualTo(181507261)
+        assertThat(statusToTotalMoney[Status.ACTIVE]).isEqualTo(81428347)
+        assertThat(statusToTotalMoney[Status.REST]).isEqualTo(176777263)
+        assertThat(statusToTotalMoney[Status.RETIREMENT]).isEqualTo(181507261)
     }
 
     companion object {
