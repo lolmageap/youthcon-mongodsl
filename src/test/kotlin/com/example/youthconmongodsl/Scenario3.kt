@@ -19,7 +19,7 @@ class Scenario3(
 ) {
     @Test
     @DisplayName("대소문자 구분 없이 별명에 hy가 포함되고 나이가 20대인 작가를 상태별로 그루핑한 뒤 가진 돈의 합을 구한다")
-    fun asIs() {
+    fun test() {
         val criteria = Criteria().andOperator(
             Criteria.where("nickname").regex("hy", "i"),
             Criteria.where("age").gte(20).lte(29),

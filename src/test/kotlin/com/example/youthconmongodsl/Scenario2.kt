@@ -18,7 +18,7 @@ class Scenario2(
 ) {
     @Test
     @DisplayName("대소문자 구분 없이 별명에 hy가 포함되고 나이가 20대인 작가를 나이가 많은 순으로 조회한다")
-    fun asIs() {
+    fun test() {
         val criteria = Criteria().andOperator(
             Criteria.where("nickname").regex("hy", "i"),
             Criteria.where("age").gte(20).lte(29),
