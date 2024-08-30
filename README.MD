@@ -111,7 +111,7 @@ Criteria로 작성된 코드를 DSL로 리팩토링합니다.
 ```kotlin
     val criteria = Criteria().andOperator(
         Criteria.where("nickname").regex("hy", "i"),
-        Criteria.where("age").gte(30),
+        Criteria.where("age").gte(20).lte(29),
     )
 
     val query = Query(criteria).with(Sort.by(Sort.Order(DESC, "age")))
@@ -122,7 +122,7 @@ Criteria로 작성된 코드를 DSL로 리팩토링합니다.
 ```kotlin
     val query = where {
         Author::nickname containsIgnoreCase "hy"
-        Author::age greaterThanEqual 30
+        Author::age between 20..29
     } order {
         Author::age by DESC
     }
@@ -140,8 +140,8 @@ MongoDB의 집계 방식을 잘 모르는 사람도 이해할 수 있도록 코�
 - AS IS
 ```kotlin
     val criteria = Criteria().andOperator(
+        Criteria.where("nickname").regex("hy", "i"),
         Criteria.where("age").gte(20).lte(29),
-        Criteria.where("books").size(3),
     )
 
     val matchOperation = MatchOperation(criteria)
@@ -154,8 +154,8 @@ MongoDB의 집계 방식을 잘 모르는 사람도 이해할 수 있도록 코�
 - TO BE
 ```kotlin
     val aggregation = where {
+        Author::nickname containsIgnoreCase "hy"
         Author::age between 20..29
-        Author::books size 3
     } groupBy {
         Author::status
     } sum {
