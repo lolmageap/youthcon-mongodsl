@@ -45,6 +45,10 @@ class Scenario2(
 class CriteriaBuilder {
     val criteriaList = mutableListOf<Criteria>()
 
+    /**
+     * containsIgnoreCase 함수를 사용 하는 곳을 보면
+     * KProperty 는 Author::nickname, value 는 "hy" 이 됩니다.
+     */
     infix fun KProperty<*>.containsIgnoreCase(
         value: String,
     ): Criteria {
@@ -53,6 +57,10 @@ class CriteriaBuilder {
         return criteria
     }
 
+    /**
+     * between 함수를 사용 하는 곳을 보면
+     * KProperty 는 Author::age, value.first 는 20, value.last 는 29가 됩니다.
+     */
     infix fun KProperty<*>.between(
         value: IntRange,
     ): Criteria {
@@ -73,6 +81,10 @@ fun where(
 class Order(
     private val criteria: Criteria,
 ) {
+    /**
+     * by 함수를 사용 하는 곳을 보면
+     * KProperty 는 Author::age, direction 은 DESC(내림차순)이 됩니다.
+     */
     infix fun KProperty<*>.by(
         direction: Direction,
     ): Query {
@@ -80,6 +92,12 @@ class Order(
     }
 }
 
+/**
+ * order { } scope 는 Order class 의 확장 함수를 매개 변수로 넘기기 때문에
+ * Order class 내부에서 함수를 사용한 것 처럼 코드를 작성할 수 있습니다.
+ * 그리고 order scope 마지막 줄은 Query Type 을 위치 시켜야 합니다.
+ * by 함수는 Query Type 을 반환 하기 때문에 문제 없이 실행 됩니다.
+ */
 infix fun Criteria.order(
     block: Order.() -> Query,
 ): Query {
