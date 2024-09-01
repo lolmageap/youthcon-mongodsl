@@ -164,3 +164,5 @@ MongoDB의 집계 방식을 잘 모르는 사람도 이해할 수 있도록 코�
 
     val aggregationResults = mongoTemplate.aggregate(aggregation, Author::class.java, Map::class.java)
 ```
+
+완성본 코드는 complete branch에 있습니다!
